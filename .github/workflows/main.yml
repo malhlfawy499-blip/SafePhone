@@ -17,32 +17,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Compatible Gradle 8.5
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.5'
-
-      - name: Extract ZIP if exists
+      - name: Extract ZIP
         run: |
           ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
           if [ -n "$ZIP_FILE" ]; then
-            echo "Unzipping $ZIP_FILE..."
             unzip -o "$ZIP_FILE" -d extracted_project
           fi
 
-      - name: Locate Project and Build APK
+      - name: Setup Android SDK & Build
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK via Gradle
         run: |
           BUILD_FILE=$(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1)
-          if [ -z "$BUILD_FILE" ]; then
-            echo "Error: No build.gradle found"
-            exit 1
-          fi
           PROJECT_DIR=$(dirname "$BUILD_FILE")
-          echo "Building in directory: $PROJECT_DIR"
           cd "$PROJECT_DIR"
-          gradle assembleDebug --stacktrace
+          chmod +x gradlew || true
+          gradle assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m"
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SafePhone-APK
