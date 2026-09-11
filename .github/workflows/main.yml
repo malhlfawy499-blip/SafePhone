@@ -17,16 +17,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Grant Execute Permission for Gradlew
-        working-directory: Mohamed_Sabry_Zein_SafePhone
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Build APK
-        working-directory: Mohamed_Sabry_Zein_SafePhone
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build APK with Gradle
+        run: |
+          find . -maxdepth 3 -name "build.gradle.kts" -o -name "build.gradle"
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SafePhone-APK
-          path: Mohamed_Sabry_Zein_SafePhone/app/build/outputs/apk/debug/app-debug.apk
+          path: '**/build/outputs/apk/debug/*.apk'
