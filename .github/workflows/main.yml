@@ -17,14 +17,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Auto Find Project and Build APK
+      - name: Unzip Project File
         run: |
-          # البحث عن المجلد الذي يحتوي على ملف البناء
-          PROJECT_DIR=$(dirname $(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1))
-          echo "Found project directory at: $PROJECT_DIR"
+          ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
+          if [ -n "$ZIP_FILE" ]; then
+            echo "Unzipping $ZIP_FILE..."
+            unzip -o "$ZIP_FILE" -d extracted_project
+          fi
+
+      - name: Build APK with Gradle
+        run: |
+          # البحث عن مجلد البناء داخل الملفات المرفوعة أو المفكوكة
+          BUILD_FILE=$(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1)
+          if [ -z "$BUILD_FILE" ]; then
+            echo "لم يتم العثور على ملفات مشروع أندرويد!"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$BUILD_FILE")
           cd "$PROJECT_DIR"
           
-          # إنتاج الـ Wrapper والبناء
           gradle wrapper
           ./gradlew assembleDebug --stacktrace
 
