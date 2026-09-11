@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest تخطي الأعطال وعمل للتطبيق Apk فورا
+    runs-on: ubuntu-latest وعمل للتطبيق Apk فورا
 
     steps:
       - name: Download project
