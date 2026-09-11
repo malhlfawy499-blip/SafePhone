@@ -24,19 +24,20 @@ jobs:
             unzip -o "$ZIP_FILE" -d extracted_project
           fi
 
-      - name: Setup Gradle 8.13
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
 
-      - name: Clean & Build APK
+      - name: Fix Permissions and Build APK
         run: |
           BUILD_FILE=$(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1)
           PROJECT_DIR=$(dirname "$BUILD_FILE")
           cd "$PROJECT_DIR"
           
-          # تنظيف الكاش القديم وبناء APK
-          ./gradlew clean assembleDebug --no-daemon
+          # إعطاء صلاحية التنفيذ وإجراء البناء
+          chmod +x gradlew || true
+          gradle assembleDebug --stacktrace --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
