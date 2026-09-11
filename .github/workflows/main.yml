@@ -17,9 +17,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Generate Gradle Wrapper & Build APK
-        working-directory: Mohamed_Sabry_Zein_SafePhone
+      - name: Auto Find Project and Build APK
         run: |
+          # البحث عن المجلد الذي يحتوي على ملف البناء
+          PROJECT_DIR=$(dirname $(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1))
+          echo "Found project directory at: $PROJECT_DIR"
+          cd "$PROJECT_DIR"
+          
+          # إنتاج الـ Wrapper والبناء
           gradle wrapper
           ./gradlew assembleDebug --stacktrace
 
@@ -27,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SafePhone-APK
-          path: Mohamed_Sabry_Zein_SafePhone/app/build/outputs/apk/debug/app-debug.apk
+          path: '**/build/outputs/apk/debug/*.apk'
