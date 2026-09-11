@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest وعمل للتطبيق Apk فورا
+    runs-on: ubuntu-latestApk
 
     steps:
       - name: Download project
