@@ -8,30 +8,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download project
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
           java-version: '17'
+          distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-
-      - name: Extract project
-        run: |
-          unzip -q "Mohamed_Sabry_Zein_SafePhone_Android_v1_3.zip" -d project
+      - name: Grant Execute Permission for Gradlew
+        working-directory: Mohamed_Sabry_Zein_SafePhone
+        run: chmod +x gradlew
 
       - name: Build APK
-        working-directory: project
-        run: gradle assembleDebug --stacktrace
+        working-directory: Mohamed_Sabry_Zein_SafePhone
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SafePhone-APK
-          path: project/app/build/outputs/apk/debug/app-debug.apk
+          path: Mohamed_Sabry_Zein_SafePhone/app/build/outputs/apk/debug/app-debug.apk
