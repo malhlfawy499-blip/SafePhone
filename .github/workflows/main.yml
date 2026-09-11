@@ -24,16 +24,19 @@ jobs:
             unzip -o "$ZIP_FILE" -d extracted_project
           fi
 
-      - name: Build APK with Java 17
+      - name: Setup Gradle 8.4
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
+      - name: Build APK Directly
         run: |
           BUILD_FILE=$(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1)
           PROJECT_DIR=$(dirname "$BUILD_FILE")
           cd "$PROJECT_DIR"
           
-          # إنشاء وتغليف ملفات Gradle المتوافقة
-          gradle wrapper --gradle-version 8.2
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          # تشغيل أمر البناء بالاعتماد على النسخة المحددة من Gradle 8.4
+          gradle assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
