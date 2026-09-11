@@ -17,25 +17,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Extract ZIP
+      - name: Unzip Project
         run: |
           ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
           if [ -n "$ZIP_FILE" ]; then
             unzip -o "$ZIP_FILE" -d extracted_project
           fi
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.4'
-
-      - name: Build APK
+      - name: Build APK with Java 17
         run: |
           BUILD_FILE=$(find . -name "build.gradle.kts" -o -name "build.gradle" | head -n 1)
           PROJECT_DIR=$(dirname "$BUILD_FILE")
           cd "$PROJECT_DIR"
-          export JAVA_HOME=$JAVA_HOME_17_X64
-          gradle assembleDebug --stacktrace
+          
+          # إنشاء وتغليف ملفات Gradle المتوافقة
+          gradle wrapper --gradle-version 8.2
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
