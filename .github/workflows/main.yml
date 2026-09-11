@@ -17,14 +17,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build APK with Gradle
-        run: gradle assembleDebug -p Mohamed_Sabry_Zein_SafePhone --stacktrace
+      - name: Generate Gradle Wrapper & Build APK
+        working-directory: Mohamed_Sabry_Zein_SafePhone
+        run: |
+          gradle wrapper
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SafePhone-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+          path: Mohamed_Sabry_Zein_SafePhone/app/build/outputs/apk/debug/app-debug.apk
