@@ -24,12 +24,10 @@ jobs:
             unzip -o "$ZIP_FILE" -d extracted_project
           fi
 
-      - name: Fix Broken activity_main.xml Automatically
+      - name: Auto Fix Broken Layout XML
         run: |
-          # البحث عن ملف activity_main.xml وإعادة كتابته بكود أندرويد سليم 100%
-          XML_FILE=$(find . -name "activity_main.xml" | head -n 1)
-          if [ -n "$XML_FILE" ]; then
-            cat << 'EOF' > "$XML_FILE"
+          # البحث عن ملف activity_main.xml واستبداله بكود سليم كلياً
+          find . -name "activity_main.xml" -exec bash -c 'cat << "EOF" > "$1"
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,9 +44,7 @@ jobs:
         android:text="SafePhone Application" />
 
 </LinearLayout>
-EOF
-            echo "Successfully repaired activity_main.xml"
-          fi
+EOF' _ {} \;
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
